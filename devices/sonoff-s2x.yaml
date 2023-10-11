@@ -28,6 +28,7 @@ sensor:
   - platform: wifi_signal
     name: "WiFi Signal"
     update_interval: 60s
+
 switch:
   - platform: gpio
     name: "Relay"
