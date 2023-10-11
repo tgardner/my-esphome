@@ -6,10 +6,10 @@ esphome:
 
 sensor:
   - platform: wifi_signal
-    name: "${friendly_name} Wifi Signal Strength"
+    name: "Wifi Signal Strength"
     update_interval: 60s
   - platform: uptime
-    name: "${friendly_name} Uptime"
+    name: "Uptime"
 #######################################
 # Device specific Config Begins Below #
 #######################################
@@ -45,7 +45,7 @@ binary_sensor:
 
   # the 2 lines below create a status entity in HomeAssistant.
   - platform: status
-    name: "${friendly_name} Status"
+    name: "Status"
 
 status_led:
   pin:
@@ -66,7 +66,7 @@ output:
 light:
   # the 4 lines below define the main relay as a light
   - platform: binary
-    name: ${device_name}_light # you can enter a custom name to appear in HomeAsistant here.
+    name: Relay
     output: main_light_relay
     id: light_id
   # the 4 lines below define the Blue LED light on Sonoff Mini, to expose in HomeAssistant remove line "internal: true"
