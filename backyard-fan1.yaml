@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "backyard-fan1"
+  friendly_name: "Backyard Fan 1"
+
+<<: !include common/base.yaml
+<<: !include common/house.yaml
+<<: !include devices/arlec-fan.yaml
