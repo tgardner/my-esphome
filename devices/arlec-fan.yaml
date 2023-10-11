@@ -1,0 +1,52 @@
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: esp01_1m
+
+# Enable Web server
+web_server:
+  port: 80
+
+uart:
+  rx_pin: GPIO03
+  tx_pin: GPIO01
+  baud_rate: 9600
+
+tuya:
+
+sensor:
+  - platform: wifi_signal
+    name: $device_name WiFi Signal
+    update_interval: 60s
+
+  - platform: uptime
+    name: $device_name Uptime
+
+fan:
+  - platform: "tuya"
+    name: "${friendly_name}"
+    switch_datapoint: 1
+    speed_datapoint: 3
+    direction_datapoint: 4
+    speed_count: 6
+
+light:
+  - platform: "tuya"
+    name: "${friendly_name} Light"
+    switch_datapoint: 9
+    dimmer_datapoint: 10
+    min_value: 0
+    max_value: 100
+    color_temperature_datapoint: 11
+    color_temperature_max_value: 100
+    cold_white_color_temperature: 150 mireds
+    warm_white_color_temperature: 400 mireds
+#Attribute info - Credit @tinglis1
+#DPS [1] VALUE [True] → fan on,off > True, False
+#DPS [3] VALUE [6] → fan speed > 1-6
+#DPS [4] VALUE [forward] → fan direction > forward, reverse
+#DPS [9] VALUE [True] → light on/off > True, False
+#DPS [10] VALUE [100] → light brightness > 0-100
+#DPS [11] VALUE [100] → light colour (cool-warm) > 0-100
+#DPS [102] VALUE [normal] → preset mode > normal, sleep, nature
+#DPS [103] VALUE [off] → timer > off, 1hour, 2hour, 4hour, 8hour

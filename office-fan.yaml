@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "office-fan"
+  friendly_name: "Office Fan"
+
+<<: !include common/base.yaml
+<<: !include common/house.yaml
+<<: !include devices/arlec-fan.yaml

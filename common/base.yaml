@@ -9,3 +9,5 @@ api:
 
 ota:
   password: !secret ota_password
+
+captive_portal:
