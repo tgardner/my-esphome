@@ -11,3 +11,7 @@ ota:
   password: !secret ota_password
 
 captive_portal:
+
+# Enable Web server
+web_server:
+  port: 80
