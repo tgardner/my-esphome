@@ -4,5 +4,4 @@ wifi:
   fast_connect: true
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "ESPHOME-${device_name}"
-    password: "12345678"
+    <<: !include ap.yaml

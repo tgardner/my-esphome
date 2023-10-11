@@ -1,0 +1,2 @@
+ssid: "ESPHOME-${device_name}"
+password: "12345678"
