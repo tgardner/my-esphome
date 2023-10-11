@@ -13,15 +13,15 @@ tuya:
 
 sensor:
   - platform: wifi_signal
-    name: $device_name WiFi Signal
+    name: WiFi Signal
     update_interval: 60s
 
   - platform: uptime
-    name: $device_name Uptime
+    name: Uptime
 
 fan:
   - platform: "tuya"
-    name: "${friendly_name}"
+    name: "Fan"
     switch_datapoint: 1
     speed_datapoint: 3
     direction_datapoint: 4
@@ -29,7 +29,7 @@ fan:
 
 light:
   - platform: "tuya"
-    name: "${friendly_name} Light"
+    name: "Light"
     switch_datapoint: 9
     dimmer_datapoint: 10
     min_value: 0
