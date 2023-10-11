@@ -11,10 +11,10 @@ web_server:
 
 sensor:
   - platform: wifi_signal
-    name: ${device_name} Wifi Signal Strength
+    name: "${friendly_name} Wifi Signal Strength"
     update_interval: 60s
   - platform: uptime
-    name: ${device_name} Uptime
+    name: "${friendly_name} Uptime"
 #######################################
 # Device specific Config Begins Below #
 #######################################
@@ -50,7 +50,7 @@ binary_sensor:
 
   # the 2 lines below create a status entity in HomeAssistant.
   - platform: status
-    name: ${device_name} Status
+    name: "${friendly_name} Status"
 
 status_led:
   pin:

@@ -1,0 +1,5 @@
+substitutions:
+  device_name: "carport-door"
+  friendly_name: "Carport Door"
+
+<<: !include devices/athom-garage-door.yaml
