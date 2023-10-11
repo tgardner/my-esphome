@@ -1,6 +1,4 @@
 # Originally from https://raw.githubusercontent.com/athom-tech/athom-configs/main/athom-garage-door.yaml
-<<: !include ../common/base.yaml
-
 esphome:
   name: "${device_name}"
   platform: ESP8266

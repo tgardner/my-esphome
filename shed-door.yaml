@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "shed-door"
+  friendly_name: "Shed Door"
+
+<<: !include common/base.yaml
+<<: !include common/shed.yaml
+<<: !include devices/athom-garage-door.yaml

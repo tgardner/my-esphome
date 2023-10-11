@@ -2,4 +2,6 @@ substitutions:
   device_name: "carport-door"
   friendly_name: "Carport Door"
 
+<<: !include common/base.yaml
+<<: !include common/house.yaml
 <<: !include devices/athom-garage-door.yaml
