@@ -1,0 +1,4 @@
+substitutions:
+  device_name: "pergola-light"
+
+<<: !include devices/sonoff_mini.yaml
