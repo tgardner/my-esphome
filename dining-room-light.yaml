@@ -1,0 +1,9 @@
+substitutions:
+  device_name: "dining-room-light"
+  friendly_name: "Dining Room Light"
+  max_temp: "70" # °C
+  dim_length: "8s"
+
+<<: !include common/base.yaml
+<<: !include common/house.yaml
+<<: !include devices/shelly-dimmer2.yaml
