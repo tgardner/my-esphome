@@ -95,7 +95,7 @@ light:
       name: "Voltage"
     current:
       name: "Current"
-    min_brightness: 150
+    min_brightness: 100
     max_brightness: 1000
     firmware:
       version: "51.7"
