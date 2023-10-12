@@ -1,0 +1,11 @@
+substitutions:
+  device_name: "laundry-light"
+  friendly_name: "Laundry Light"
+  channel_1: "Laundry Light"
+  channel_2: "Roof Light"
+  max_power: "2000.0"
+  max_temp: "70.0"
+
+<<: !include common/base.yaml
+<<: !include common/house.yaml
+<<: !include devices/shelly-25.yaml
