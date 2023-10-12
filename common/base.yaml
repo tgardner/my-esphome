@@ -19,4 +19,4 @@ web_server:
 
 time:
 - platform: sntp
-  id: my_time
+  id: sntp_time
