@@ -4,100 +4,97 @@ esphome:
   friendly_name: ${friendly_name}
   platform: ESP8266
   board: esp8285
+  comment: Athom Garage Door
 
 sensor:
-  - platform: uptime
-    name: "Uptime"
-  - platform: wifi_signal
-    name: "WiFi Signal"
-    update_interval: 60s
+- platform: uptime
+  name: "Uptime"
+- platform: wifi_signal
+  name: "WiFi Signal"
+  update_interval: 60s
 
 binary_sensor:
-  - platform: status
-    name: "Status"
+- platform: status
+  name: "Status"
 
-  - platform: gpio
-    name: "Contact"
-    internal: true
-    device_class: garage_door
-    id: contact
-    pin:
-      number: GPIO4
-      inverted: true
-    filters:
-      - delayed_on: 20ms
+- platform: gpio
+  name: "Contact"
+  internal: true
+  device_class: garage_door
+  id: contact
+  pin:
+    number: GPIO4
+    inverted: true
+  filters:
+  - delayed_on: 20ms
 
-  - platform: gpio
-    pin:
-      number: GPIO14
-      mode: INPUT_PULLUP
-      inverted: true
-    name: "Button"
-    internal: true
-    on_multi_click:
-      - timing:
-          - ON for at most 1s
-          - OFF for at least 0.2s
-        then:
-          - switch.turn_on: relay
-      - timing:
-          - ON for at least 4s
-        then:
-          - button.press: Reset
+- platform: gpio
+  pin:
+    number: GPIO14
+    mode: INPUT_PULLUP
+    inverted: true
+  name: "Button"
+  internal: true
+  on_multi_click:
+  - timing:
+    - ON for at most 1s
+    - OFF for at least 0.2s
+    then:
+    - switch.turn_on: relay
+  - timing:
+    - ON for at least 4s
+    then:
+    - button.press: Reset
 
 button:
-  - platform: factory_reset
-    internal: true
-    name: Restart with Factory Default Settings
-    id: Reset
+- platform: factory_reset
+  internal: true
+  name: Restart with Factory Default Settings
+  id: Reset
 
 switch:
-  - platform: gpio
-    pin: GPIO5
-    name: "Relay"
-    id: relay
-    internal: true
-    on_turn_on:
-      - light.turn_on: wifi_led
-      - delay: 1s
-      - switch.turn_off: relay
-      - light.turn_off: wifi_led
+- platform: gpio
+  pin: GPIO5
+  name: "Relay"
+  id: relay
+  internal: true
+  on_turn_on:
+  - light.turn_on: wifi_led
+  - delay: 1s
+  - switch.turn_off: relay
+  - light.turn_off: wifi_led
 
 light:
-  - platform: status_led
-    name: "Status LED"
-    id: wifi_led
-    internal: true
-    pin: GPIO12
+- platform: status_led
+  name: "Status LED"
+  id: wifi_led
+  internal: true
+  pin: GPIO12
 
 cover:
-  - platform: template
-    device_class: garage
-    lambda: "return id(contact).state ? COVER_OPEN : COVER_CLOSED;"
-    name: Control
-    open_action:
-      then:
-        - if:
-            condition:
-              lambda: "return !id(contact).state;"
-            then:
-              - switch.turn_on: relay
-    stop_action:
-      - switch.turn_on: relay
-    close_action:
-      then:
-        - if:
-            condition:
-              lambda: "return id(contact).state;"
-            then:
-              - switch.turn_on: relay
+- platform: template
+  device_class: garage
+  lambda: "return id(contact).state ? COVER_OPEN : COVER_CLOSED;"
+  name: Control
+  open_action:
+    then:
+    - if:
+        condition:
+          lambda: "return !id(contact).state;"
+        then:
+        - switch.turn_on: relay
+  stop_action:
+  - switch.turn_on: relay
+  close_action:
+    then:
+    - if:
+        condition:
+          lambda: "return id(contact).state;"
+        then:
+        - switch.turn_on: relay
 
 text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "IP Address"
-      disabled_by_default: true
-
-time:
-  - platform: sntp
-    id: my_time
+- platform: wifi_info
+  ip_address:
+    name: "IP Address"
+    disabled_by_default: true

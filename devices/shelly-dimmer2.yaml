@@ -5,10 +5,6 @@ esphome:
   platform: ESP8266
   board: esp01_1m
 
-time:
-- platform: sntp
-  id: my_time
-
 uart:
   tx_pin: 1
   rx_pin: 3
@@ -99,7 +95,7 @@ light:
     name: "Light Voltage"
   current:
     name: "Light Current"
-  min_brightness: 200
+  min_brightness: 150
   max_brightness: 1000
   firmware:
     version: "51.7"
@@ -108,7 +104,7 @@ light:
 binary_sensor:
 - platform: gpio
   name: 'Switch 1'
-  id: switchID_1
+  id: light_switch
   pin:
     number: GPIO14
     mode: INPUT
@@ -161,7 +157,7 @@ binary_sensor:
     - while:
         condition:
           and:
-          - binary_sensor.is_on: switchID_1
+          - binary_sensor.is_on: light_switch
           - lambda: 'return(id(dimmer).remote_values.get_brightness() >= 0.01);'
         then:
         - light.dim_relative:
@@ -178,7 +174,7 @@ binary_sensor:
     - while:
         condition:
           and:
-          - binary_sensor.is_on: switchID_1
+          - binary_sensor.is_on: light_switch
           - lambda: 'return(id(dimmer).remote_values.get_brightness() <= 0.999);'
         then:
         - light.dim_relative:
