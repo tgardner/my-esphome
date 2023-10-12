@@ -1,6 +1,7 @@
 esphome:
   name: ${device_name}
   friendly_name: ${friendly_name}
+  comment: Sonoff Mini
   platform: ESP8266
   board: esp01_1m
 
