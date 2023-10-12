@@ -1,0 +1,8 @@
+substitutions:
+  device_name: "charlottes-room-light"
+  friendly_name: "Charlottes Room Light"
+  max_temp: "70" # °C
+
+<<: !include common/base.yaml
+<<: !include common/house.yaml
+<<: !include devices/shelly-dimmer2.yaml
