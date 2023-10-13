@@ -1,3 +1,13 @@
+substitutions:
+  api_key: !secret api_encryption_key
+  ota_password: !secret ota_password
+  comment: ""
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  comment: ${comment}
+
 # Enable logging
 logger:
   baud_rate: 0
@@ -6,12 +16,12 @@ logger:
 api:
   reboot_timeout: 15min
   encryption:
-    key: !secret api_encryption_key
+    key: ${api_key}
 
 ota:
-  password: !secret ota_password
+  password: ${ota_password}
 
-#captive_portal:
+captive_portal:
 
 # Enable Web server
 web_server:
@@ -20,3 +30,26 @@ web_server:
 time:
 - platform: sntp
   id: sntp_time
+
+sensor:
+- platform: uptime
+  name: "Uptime"
+- platform: wifi_signal
+  name: "WiFi Signal"
+  update_interval: 60s
+
+text_sensor:
+- platform: wifi_info
+  ip_address:
+    name: "IP Address"
+- platform: version
+  name: "ESPHome Version"
+
+binary_sensor:
+- platform: status
+  name: "Status"
+
+button:
+- platform: restart
+  name: "Restart"
+  id: restart_button

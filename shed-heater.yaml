@@ -2,9 +2,6 @@ substitutions:
   device_name: "shed-heater"
   friendly_name: "Shed Heater"
 
-<<: !include common/base.yaml
-<<: !include common/shed.yaml
-<<: !include
-  file: devices/athom-smart-plug-v2.yaml
-  vars:
-    relay_restore_mode: RESTORE_DEFAULT_OFF
+packages:
+  device: !include devices/athom-smart-plug-v2.yaml
+  location: !include common/shed.yaml

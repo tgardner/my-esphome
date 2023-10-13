@@ -1,8 +1,7 @@
 substitutions:
   device_name: "lounge-light"
   friendly_name: "Lounge Light"
-  max_temp: "70" # °C
 
-<<: !include common/base.yaml
-<<: !include common/house.yaml
-<<: !include devices/shelly-dimmer2.yaml
+packages:
+  device: !include devices/shelly-dimmer2.yaml
+  location: !include common/house.yaml

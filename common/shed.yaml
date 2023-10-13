@@ -1,7 +1,6 @@
-wifi:
-  ssid: !secret shed_ssid
-  password: !secret shed_password
-  fast_connect: true
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    <<: !include ap.yaml
+packages:
+  wifi: !include
+    file: wifi.yaml
+    vars:
+      wifi_ssid: !secret shed_ssid
+      wifi_password: !secret shed_password

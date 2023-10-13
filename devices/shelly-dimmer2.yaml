@@ -1,25 +1,17 @@
-esphome:
-  name: ${device_name}
-  friendly_name: ${friendly_name}
+substitutions:
   comment: Shelly Dimmer 2
-  platform: ESP8266
+  max_temp: "70" # °C
+
+packages:
+  common: !include ../common/base.yaml
+
+esp8266:
   board: esp01_1m
 
 uart:
   tx_pin: 1
   rx_pin: 3
   baud_rate: 115200
-
-text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "IP Address"
-    ssid:
-      name: "SSID"
-    bssid:
-      name: "BSSID"
-  - platform: version
-    name: "ESPHome Version"
 
 sensor: #Important: don't change this sensor-part unless you know what you are doing. These sensors will shut the light down when overheating temperature is reached.
   # NTC Temperature
@@ -78,10 +70,6 @@ sensor: #Important: don't change this sensor-part unless you know what you are d
       # Multiplication factor from W to kW is 0.001
       - multiply: 0.001
     unit_of_measurement: kWh
-
-switch:
-  - platform: restart
-    name: "Restart"
 
 light:
   - platform: shelly_dimmer

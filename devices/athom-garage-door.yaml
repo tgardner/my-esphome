@@ -1,22 +1,13 @@
-# Originally from https://raw.githubusercontent.com/athom-tech/athom-configs/main/athom-garage-door.yaml
-esphome:
-  name: "${device_name}"
-  friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: esp8285
+substitutions:
   comment: Athom Garage Door
 
-sensor:
-- platform: uptime
-  name: "Uptime"
-- platform: wifi_signal
-  name: "WiFi Signal"
-  update_interval: 60s
+packages:
+  common: !include ../common/base.yaml
+
+esp8266:
+  board: esp8285
 
 binary_sensor:
-- platform: status
-  name: "Status"
-
 - platform: gpio
   name: "Contact"
   internal: true
@@ -44,13 +35,7 @@ binary_sensor:
   - timing:
     - ON for at least 4s
     then:
-    - button.press: Reset
-
-button:
-- platform: factory_reset
-  internal: true
-  name: Restart with Factory Default Settings
-  id: Reset
+    - button.press: restart_button
 
 switch:
 - platform: gpio
@@ -92,9 +77,3 @@ cover:
           lambda: "return id(contact).state;"
         then:
         - switch.turn_on: relay
-
-text_sensor:
-- platform: wifi_info
-  ip_address:
-    name: "IP Address"
-    disabled_by_default: true

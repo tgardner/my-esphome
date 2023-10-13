@@ -3,9 +3,7 @@ substitutions:
   friendly_name: "Shed Light"
   channel_1: "Shed Light"
   channel_2: "Carport Light"
-  max_power: "2000.0"
-  max_temp: "70.0"
 
-<<: !include common/base.yaml
-<<: !include common/shed.yaml
-<<: !include devices/shelly-25.yaml
+packages:
+  device: !include devices/shelly-25.yaml
+  location: !include common/shed.yaml

@@ -2,6 +2,9 @@ substitutions:
   device_name: "hdmi-matrix"
   friendly_name: "HDMI Matrix"
 
-<<: !include common/base.yaml
-<<: !include common/house.yaml
-<<: !include devices/sonoff-s2x.yaml
+packages:
+  device: !include
+    file: devices/sonoff-s2x.yaml
+    vars:
+      restore_mode: RESTORE_DEFAULT_OFF
+  location: !include common/house.yaml

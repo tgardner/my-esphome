@@ -1,12 +1,12 @@
-# Basic Config
-esphome:
-  name: ${device_name}
-  friendly_name: ${friendly_name}
+substitutions:
   comment: Sonoff S2X
+  restore_mode: ALWAYS_OFF
+
+packages:
+  common: !include ../common/base.yaml
 
 esp8266:
   board: esp01_1m
-  board_flash_mode: dout
 
 status_led:
   pin:
@@ -14,26 +14,19 @@ status_led:
     inverted: false
 
 binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: True
-    name: "Button"
-    on_press:
-      - switch.toggle: relay
-  - platform: status
-    name: "Status"
-
-sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal"
-    update_interval: 60s
+- platform: gpio
+  pin:
+    number: GPIO0
+    mode: INPUT_PULLUP
+    inverted: True
+  name: "Button"
+  internal: true
+  on_press:
+  - switch.toggle: relay
 
 switch:
-  - platform: gpio
-    name: "Relay"
-    pin: GPIO12
-    id: "relay"
-  - platform: restart
-    name: "Restart"
+- platform: gpio
+  name: "Relay"
+  pin: GPIO12
+  id: "relay"
+  restore_mode: ${restore_mode}

@@ -2,6 +2,6 @@ substitutions:
   device_name: "3d-printer"
   friendly_name: "3D Printer"
 
-<<: !include common/base.yaml
-<<: !include common/shed.yaml
-<<: !include devices/sonoff-s2x.yaml
+packages:
+  device: !include devices/sonoff-s2x.yaml
+  location: !include common/shed.yaml

@@ -2,6 +2,6 @@ substitutions:
   device_name: "backyard-fan2"
   friendly_name: "Backyard Fan 2"
 
-<<: !include common/base.yaml
-<<: !include common/house.yaml
-<<: !include devices/arlec-fan.yaml
+packages:
+  device: !include devices/arlec-fan.yaml
+  location: !include common/house.yaml

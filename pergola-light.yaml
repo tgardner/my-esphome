@@ -2,6 +2,6 @@ substitutions:
   device_name: "pergola-light"
   friendly_name: "Pergola Light"
 
-<<: !include common/base.yaml
-<<: !include common/house.yaml
-<<: !include devices/sonoff-mini.yaml
+packages:
+  device: !include devices/sonoff-mini.yaml
+  location: !include common/house.yaml

@@ -1,7 +1,9 @@
-esphome:
-  name: "${device_name}"
-  friendly_name: ${friendly_name}
+substitutions:
   comment: Athom Smart Plug V2
+  relay_restore_mode: RESTORE_DEFAULT_OFF
+
+packages:
+  common: !include ../common/base.yaml
 
 esp8266:
   board: esp8285
@@ -21,9 +23,6 @@ globals:
   initial_value: '0.0'
 
 binary_sensor:
-- platform: status
-  name: "Status"
-
 - platform: gpio
   pin:
     number: 5
@@ -40,20 +39,15 @@ binary_sensor:
   - timing:
     - ON for at least 4s
     then:
-    - button.press: Reset
+    - button.press: restart_button
 
 sensor:
-- platform: uptime
-  name: "Uptime"
-
 - platform: cse7766
   update_interval: 10s
   current:
     name: "Current"
     filters:
     - lambda: if (x < 0.060) return 0.0; else return x; #For the chip will report less than 3w power when no load is connected
-
-
   voltage:
     name: "Voltage"
   power:
@@ -61,8 +55,6 @@ sensor:
     id: power_sensor
     filters:
     - lambda: if (x < 3.0) return 0.0; else return x; #For the chip will report less than 3w power when no load is connected
-
-
   energy:
     name: "Energy"
     id: energy
@@ -98,10 +90,6 @@ sensor:
   - multiply: 0.001
 
 button:
-- platform: factory_reset
-  name: "Restart with Factory Default Settings"
-  id: Reset
-
 - platform: safe_mode
   name: "Safe Mode"
   internal: false
@@ -121,12 +109,3 @@ light:
   pin:
     inverted: true
     number: GPIO13
-
-text_sensor:
-- platform: wifi_info
-  ip_address:
-    name: "IP Address"
-  ssid:
-    name: "Connected SSID"
-  mac_address:
-    name: "Mac Address"
