@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "christmas-tree"
+  friendly_name: "Christmas Tree"
+
+packages:
+  device: !include devices/sonoff-s2x.yaml
+  location: !include common/house.yaml
