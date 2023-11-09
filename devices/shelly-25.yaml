@@ -1,7 +1,7 @@
 substitutions:
   comment: Shelly 2.5
   max_power: "2000.0"
-  max_temp: "70.0"
+  max_temp: "80.0"
   channel_1: "Channel 1"
   channel_2: "Channel 2"
 
@@ -146,3 +146,9 @@ binary_sensor:
   on_state:
     then:
     - light.toggle: lightid2
+# https://simplyexplained.com/blog/shelly25-esphome-potential-fire-hazard-fix/
+# Prevent short circuit with "floating" pin!
+- platform: gpio
+  pin: GPIO16
+  name: "ade7953 IRQ pin"
+  internal: true
