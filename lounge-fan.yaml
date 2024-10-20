@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "lounge-fan"
+  friendly_name: "Lounge Fan"
+
+packages:
+  device: !include devices/arlec-fan.yaml
+  location: !include common/house.yaml

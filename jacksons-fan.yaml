@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "jacksons-fan"
+  friendly_name: "Jackson's Fan"
+
+packages:
+  device: !include devices/arlec-fan.yaml
+  location: !include common/house.yaml

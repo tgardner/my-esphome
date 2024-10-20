@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "bug-zapper"
+  friendly_name: "Bug Zapper"
+
+packages:
+  device: !include devices/athom-smart-plug-v2.yaml
+  location: !include common/house.yaml
