@@ -6,5 +6,5 @@ packages:
   device: !include
     file: devices/sonoff-s2x.yaml
     vars:
-      restore_mode: RESTORE_DEFAULT_OFF
+      restore_mode: RESTORE_DEFAULT_ON
   location: !include common/house.yaml

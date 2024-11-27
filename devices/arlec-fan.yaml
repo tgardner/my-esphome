@@ -1,5 +1,6 @@
 substitutions:
   comment: Arlec Smart Boston Fan
+  light_restore_mode: ALWAYS_OFF
 
 packages:
   common: !include ../common/base.yaml
@@ -33,3 +34,4 @@ light:
   color_temperature_max_value: 100
   cold_white_color_temperature: 150 mireds
   warm_white_color_temperature: 400 mireds
+  restore_mode: ${light_restore_mode}
