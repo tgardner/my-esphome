@@ -1,10 +1,10 @@
 substitutions:
+  name: "hdmi-matrix"
   device_name: "hdmi-matrix"
   friendly_name: "HDMI Matrix"
+  room: Office
+  relay_restore_mode: RESTORE_DEFAULT_ON
 
 packages:
-  device: !include
-    file: devices/sonoff-s2x.yaml
-    vars:
-      restore_mode: RESTORE_DEFAULT_ON
+  device: !include devices/athom-smart-plug-v2.yaml
   location: !include common/house.yaml
