@@ -1,9 +1,8 @@
 substitutions:
-  name: "athom-smart-plug-v2"
+  device_name: "athom-smart-plug-v2"
   friendly_name: "Smart Plug V2"
   # Allows ESP device to be automatically lined to an 'Area' in Home Assistant. Typically used for areas such as 'Lounge Room', 'Kitchen' etc
-  room: ""
-  device_description: "athom smart plug v2"
+  comment: Athom Smart Plug V2
   project_name: "China Athom Technology.Athom Plug V2"
   project_version: "v2.0.8"
   sensor_update_interval: "10s"
@@ -12,14 +11,6 @@ substitutions:
   current_limit: "10"
   # Define a domain for this device to use. i.e. iot.home.lan (so device will appear as athom-smart-plug-v2.iot.home.lan in DNS/DHCP logs)
   dns_domain: ".local"
-  # Set timezone of the smart plug. Useful if the plug is in a location different to the HA server. Can be entered in unix Country/Area format (i.e. "Australia/Sydney")
-  timezone: ""
-  # Set the duration between the sntp service polling ntp.org servers for an update
-  sntp_update_interval: "6h"
-  # Network time servers for your region, enter from lowest to highest priority. To use local servers update as per zones or countries at: https://www.ntppool.org/zone/@
-  sntp_server_1: "0.pool.ntp.org"
-  sntp_server_2: "1.pool.ntp.org"
-  sntp_server_3: "2.pool.ntp.org"
   # Enables faster network connections, with last connected SSID being connected to and no full scan for SSID being undertaken
   wifi_fast_connect: "false"
   # Define logging level: NONE, ERROR, WARN, INFO, DEBUG (Default), VERBOSE, VERY_VERBOSE
@@ -32,15 +23,15 @@ substitutions:
   early_pin_init: "true"
   # Power plug icon selection. Change to reflect the type/country of powr plug in use, this will update the power plug icon shown next to the switch
   power_plug_type: "power-socket-au" # Options: power-socket-au | power-socket-ch | power-socket-de | power-socket-eu | power-socket-fr | power-socket-it | power-socket-jp | power-socket-uk | power-socket-us |
+  name_add_mac_suffix: "false"
 
 ########################## End of Substitutions #########################
 
+packages:
+  common: !include ../common/base.yaml
+
 esphome:
-  name: "${name}"
-  friendly_name: "${friendly_name}"
-  comment: "${device_description}"
-  area: "${room}"
-  name_add_mac_suffix: true
+  name_add_mac_suffix: ${name_add_mac_suffix}
   min_version: 2024.6.0
   project:
     name: "${project_name}"
@@ -50,27 +41,27 @@ esphome:
     board_upload.maximum_size: 2097152
     board_build.ldscript: eagle.flash.2m.ld
   on_boot:
-    - priority: 600
-      then:
-        - select.set_index:
-            id: power_mode
-            index: !lambda |-
-              return id(restore_mode)-1;
-        - lambda: |-
-            switch(id(restore_mode))
-            {
-            case 1:{
-                    id(relay).turn_off();
-                    break;
-                          }
-            case 2:{
-                    id(relay).turn_on();
-                    break;
-                          }
-            default:{
-                    break;
-                          }
-            }
+  - priority: 600
+    then:
+    - select.set_index:
+        id: power_mode
+        index: !lambda |-
+          return id(restore_mode)-1;
+    - lambda: |-
+        switch(id(restore_mode))
+        {
+        case 1:{
+                id(relay).turn_off();
+                break;
+                      }
+        case 2:{
+                id(relay).turn_on();
+                break;
+                      }
+        default:{
+                break;
+                      }
+        }
 
 esp8266:
   board: esp8285
@@ -83,7 +74,7 @@ preferences:
 api:
 
 ota:
-  - platform: esphome
+- platform: esphome
 
 logger:
   level: ${log_level}
@@ -123,301 +114,255 @@ uart:
   parity: EVEN
 
 globals:
-  - id: total_energy
-    type: float
-    restore_value: yes
-    initial_value: "0.0"
-  - id: restore_mode
-    type: int
-    restore_value: yes
-    initial_value: "2" # 0 = Always_Off. 1 = Restore_Power_Off. 2 = Always_On.
+- id: total_energy
+  type: float
+  restore_value: yes
+  initial_value: "0.0"
+- id: restore_mode
+  type: int
+  restore_value: yes
+  initial_value: "2" # 0 = Always_Off. 1 = Restore_Power_Off. 2 = Always_On.
 
 select:
-  - platform: template
-    name: "Power On State"
-    id: "power_mode"
-    optimistic: true
-    icon: mdi:electric-switch
-    options:
-      - Always Off
-      - Always On
-      - Restore Power Off State
-    on_value:
-      then:
-        - lambda: |-
-            id(restore_mode)=i+1;
+- platform: template
+  name: "Power On State"
+  id: "power_mode"
+  optimistic: true
+  icon: mdi:electric-switch
+  options:
+  - Always Off
+  - Always On
+  - Restore Power Off State
+  on_value:
+    then:
+    - lambda: |-
+        id(restore_mode)=i+1;
 
 binary_sensor:
-  - platform: status
-    name: "Status"
-    icon: mdi:check-network-outline
-    entity_category: diagnostic
 
-  - platform: gpio
-    pin:
-      number: 5
-      mode: INPUT_PULLUP
-      inverted: true
-    id: power_button
-    name: "Power Button"
-    disabled_by_default: true
-    on_multi_click:
-      - timing:
-          - ON for at most 1s
-          - OFF for at least 0.2s
-        then:
-          - switch.toggle: relay
-      - timing:
-          - ON for at least 4s
-        then:
-          - button.press: Reset
+- platform: gpio
+  pin:
+    number: 5
+    mode: INPUT_PULLUP
+    inverted: true
+  id: power_button
+  name: "Power Button"
+  disabled_by_default: true
+  on_multi_click:
+  - timing:
+    - ON for at most 1s
+    - OFF for at least 0.2s
+    then:
+    - switch.toggle: relay
+  - timing:
+    - ON for at least 4s
+    then:
+    - button.press: Reset
 
 sensor:
-  - platform: uptime
-    name: "Uptime Sensor"
-    id: uptime_sensor
-    entity_category: diagnostic
-    internal: true
+- platform: uptime
+  name: "Uptime Sensor"
+  id: uptime_sensor
+  entity_category: diagnostic
+  internal: true
 
-  # Reports the WiFi signal strength/RSSI in dB
-  - platform: wifi_signal
-    name: "WiFi Signal dB"
-    id: wifi_signal_db
-    update_interval: 60s
-    entity_category: diagnostic
+# Reports the WiFi signal strength/RSSI in dB
+- platform: wifi_signal
+  name: "WiFi Signal dB"
+  id: wifi_signal_db
+  update_interval: 60s
+  entity_category: diagnostic
 
-  # Reports the WiFi signal strength in %
-  - platform: copy
-    source_id: wifi_signal_db
-    name: "WiFi Signal Percent"
+# Reports the WiFi signal strength in %
+- platform: copy
+  source_id: wifi_signal_db
+  name: "WiFi Signal Percent"
+  filters:
+  - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+  unit_of_measurement: "%"
+  entity_category: diagnostic
+  device_class: ""
+
+# CSE7766 power monitoring chip
+- platform: cse7766
+  id: athom_cse7766
+  current:
+    name: "Current"
+    id: plug_current # Added ID so we can reference this in other sensors
+    icon: mdi:current-ac
     filters:
-      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
-    unit_of_measurement: "%"
-    entity_category: diagnostic
-    device_class: ""
+    - throttle_average: ${sensor_update_interval}
+    - lambda: if (x < 0.060) return 0.0; else return x; # For the chip will report less than 3w power when no load is connected
+    on_value_range:
+    - above: ${current_limit}
+      then:
+      - switch.turn_off: relay
 
-  # CSE7766 power monitoring chip
-  - platform: cse7766
-    id: athom_cse7766
-    current:
-      name: "Current"
-      id: plug_current # Added ID so we can reference this in other sensors
-      icon: mdi:current-ac
-      filters:
-        - throttle_average: ${sensor_update_interval}
-        - lambda: if (x < 0.060) return 0.0; else return x; # For the chip will report less than 3w power when no load is connected
-      on_value_range:
-        - above: ${current_limit}
-          then:
-            - switch.turn_off: relay
+  voltage:
+    name: "Voltage"
+    id: plug_voltage # Added ID so we can reference this in other sensors
+    icon: mdi:sine-wave
+    filters:
+    - throttle_average: ${sensor_update_interval}
 
-    voltage:
-      name: "Voltage"
-      id: plug_voltage # Added ID so we can reference this in other sensors
-      icon: mdi:sine-wave
-      filters:
-        - throttle_average: ${sensor_update_interval}
+  power:
+    name: "Power"
+    id: power_sensor
+    icon: mdi:power
+    filters:
+    - throttle_average: ${sensor_update_interval}
+    - lambda: if (x < 3.0) return 0.0; else return x; # For the chip will report less than 3w power when no load is connected
 
-    power:
-      name: "Power"
-      id: power_sensor
-      icon: mdi:power
-      filters:
-        - throttle_average: ${sensor_update_interval}
-        - lambda: if (x < 3.0) return 0.0; else return x; # For the chip will report less than 3w power when no load is connected
-
-    energy:
-      name: "Energy"
-      id: energy
-      icon: mdi:lightning-bolt
-      unit_of_measurement: kWh
-      internal: ${hide_energy_sensor}
-      filters:
-        - throttle: ${sensor_update_interval}
-        # Multiplication factor from W to kW is 0.001
-        - multiply: 0.001
-      on_value:
-        then:
-          - lambda: |-
-              static float previous_energy_value = 0.0;
-              float current_energy_value = id(energy).state;
-              id(total_energy) += current_energy_value - previous_energy_value;
-              previous_energy_value = current_energy_value;
-              id(total_energy_sensor).update();
-
-    apparent_power:
-      name: "Apparent Power"
-      icon: mdi:power
-      filters:
-        - throttle_average: ${sensor_update_interval}
-
-    reactive_power:
-      name: "Reactive Power"
-      icon: mdi:flash
-      filters:
-        - throttle_average: ${sensor_update_interval}
-
-    power_factor:
-      name: "Power Factor"
-      icon: mdi:percent-outline
-      filters:
-        - throttle_average: ${sensor_update_interval}
-
-  - platform: template
-    name: "Total Energy"
-    id: total_energy_sensor
-    unit_of_measurement: kWh
-    device_class: "energy"
-    state_class: "total_increasing"
+  energy:
+    name: "Energy"
+    id: energy
     icon: mdi:lightning-bolt
-    accuracy_decimals: 3
-    lambda: |-
-      return id(total_energy);
-    update_interval: ${sensor_update_interval}
-
-  - platform: total_daily_energy
-    name: "Total Energy Since Boot"
-    restore: true
-    power_id: power_sensor
     unit_of_measurement: kWh
-    icon: mdi:hours-24
-    accuracy_decimals: 3
+    internal: ${hide_energy_sensor}
     filters:
-      - multiply: 0.001
+    - throttle: ${sensor_update_interval}
+    # Multiplication factor from W to kW is 0.001
+    - multiply: 0.001
+    on_value:
+      then:
+      - lambda: |-
+          static float previous_energy_value = 0.0;
+          float current_energy_value = id(energy).state;
+          id(total_energy) += current_energy_value - previous_energy_value;
+          previous_energy_value = current_energy_value;
+          id(total_energy_sensor).update();
 
-  #    # Dentra Components - Define the id of the sensor providing 'Total Energy' used
-  # - platform: "energy_statistics"
-  #   total: total_energy_sensor
+  apparent_power:
+    name: "Apparent Power"
+    icon: mdi:power
+    filters:
+    - throttle_average: ${sensor_update_interval}
 
-  #    # Dentra Components - Adds Energy Today. Persistents if restarted, unlike 'total_daily_energy'
-  #   energy_today:
-  #     name: "Energy Today"
-  #     id: total_energy_today
-  #     accuracy_decimals: 3
-  #     icon: mdi:hours-24
+  reactive_power:
+    name: "Reactive Power"
+    icon: mdi:flash
+    filters:
+    - throttle_average: ${sensor_update_interval}
 
-  #    # Dentra Components - Adds Energy Yesterday
-  #   energy_yesterday:
-  #     name: "Total Energy Yesterday"
-  #     id: total_energy_yesterday
-  #     icon: mdi:calendar-today
-  #     accuracy_decimals: 3
+  power_factor:
+    name: "Power Factor"
+    icon: mdi:percent-outline
+    filters:
+    - throttle_average: ${sensor_update_interval}
 
-  #    # Dentra Components - Adds Energy Week
-  #   energy_week:
-  #     name: "Total Energy Week"
-  #     id: total_energy_week
-  #     icon: mdi:calendar-week
-  #     accuracy_decimals: 3
+- platform: template
+  name: "Total Energy"
+  id: total_energy_sensor
+  unit_of_measurement: kWh
+  device_class: "energy"
+  state_class: "total_increasing"
+  icon: mdi:lightning-bolt
+  accuracy_decimals: 3
+  lambda: |-
+    return id(total_energy);
+  update_interval: ${sensor_update_interval}
 
-  #    # Dentra Components - Adds Energy Month
-  #   energy_month:
-  #     name: "Total Energy Month"
-  #     id: total_energy_month
-  #     accuracy_decimals: 3
-  #     icon: mdi:calendar-month
+- platform: total_daily_energy
+  name: "Total Energy Since Boot"
+  restore: true
+  power_id: power_sensor
+  unit_of_measurement: kWh
+  icon: mdi:hours-24
+  accuracy_decimals: 3
+  filters:
+  - multiply: 0.001
+#    # Dentra Components - Define the id of the sensor providing 'Total Energy' used
+# - platform: "energy_statistics"
+#   total: total_energy_sensor
+
+#    # Dentra Components - Adds Energy Today. Persistents if restarted, unlike 'total_daily_energy'
+#   energy_today:
+#     name: "Energy Today"
+#     id: total_energy_today
+#     accuracy_decimals: 3
+#     icon: mdi:hours-24
+
+#    # Dentra Components - Adds Energy Yesterday
+#   energy_yesterday:
+#     name: "Total Energy Yesterday"
+#     id: total_energy_yesterday
+#     icon: mdi:calendar-today
+#     accuracy_decimals: 3
+
+#    # Dentra Components - Adds Energy Week
+#   energy_week:
+#     name: "Total Energy Week"
+#     id: total_energy_week
+#     icon: mdi:calendar-week
+#     accuracy_decimals: 3
+
+#    # Dentra Components - Adds Energy Month
+#   energy_month:
+#     name: "Total Energy Month"
+#     id: total_energy_month
+#     accuracy_decimals: 3
+#     icon: mdi:calendar-month
 
 button:
-  - platform: restart
-    name: "Restart"
-    entity_category: config
+- platform: factory_reset
+  name: "Factory Reset"
+  id: Reset
+  entity_category: config
 
-  - platform: factory_reset
-    name: "Factory Reset"
-    id: Reset
-    entity_category: config
-
-  - platform: safe_mode
-    name: "Safe Mode"
-    internal: false
-    entity_category: config
+- platform: safe_mode
+  name: "Safe Mode"
+  internal: false
+  entity_category: config
 
 switch:
-  - platform: gpio
-    name: "Switch"
-    pin: GPIO12
-    id: relay
-    restore_mode: ${relay_restore_mode}
-    icon: mdi:${power_plug_type}
+- platform: gpio
+  name: "Switch"
+  pin: GPIO12
+  id: relay
+  restore_mode: ${relay_restore_mode}
+  icon: mdi:${power_plug_type}
 
 light:
-  - platform: status_led
-    name: "Status LED"
-    id: blue_led
-    icon: mdi:lightbulb-outline
-    disabled_by_default: true
-    pin:
-      inverted: true
-      number: GPIO13
+- platform: status_led
+  name: "Status LED"
+  id: blue_led
+  icon: mdi:lightbulb-outline
+  disabled_by_default: true
+  pin:
+    inverted: true
+    number: GPIO13
 
 text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "IP Address"
-      icon: mdi:ip-network
-      entity_category: diagnostic
-    ssid:
-      name: "Connected SSID"
-      icon: mdi:wifi-strength-2
-      entity_category: diagnostic
-    mac_address:
-      name: "Mac Address"
-      icon: mdi:network-pos
-      entity_category: diagnostic
 
-  #  Creates a sensor showing when the device was last restarted
-  - platform: template
-    name: "Last Restart"
-    id: device_last_restart
-    icon: mdi:clock
-    entity_category: diagnostic
-  #    device_class: timestamp
+#  Creates a sensor showing when the device was last restarted
+- platform: template
+  name: "Last Restart"
+  id: device_last_restart
+  icon: mdi:clock
+  entity_category: diagnostic
+#    device_class: timestamp
 
-  #  Creates a sensor of the uptime of the device, in formatted days, hours, minutes and seconds
-  - platform: template
-    name: "Uptime"
-    entity_category: diagnostic
-    lambda: |-
-      int seconds = (id(uptime_sensor).state);
-      int days = seconds / (24 * 3600);
-      seconds = seconds % (24 * 3600);
-      int hours = seconds / 3600;
-      seconds = seconds % 3600;
-      int minutes = seconds /  60;
-      seconds = seconds % 60;
-      if ( days > 3650 ) {
-        return { "Starting up" };
-      } else if ( days ) {
-        return { (String(days) +"d " + String(hours) +"h " + String(minutes) +"m "+ String(seconds) +"s").c_str() };
-      } else if ( hours ) {
-        return { (String(hours) +"h " + String(minutes) +"m "+ String(seconds) +"s").c_str() };
-      } else if ( minutes ) {
-        return { (String(minutes) +"m "+ String(seconds) +"s").c_str() };
-      } else {
-        return { (String(seconds) +"s").c_str() };
-      }
-    icon: mdi:clock-start
-
-time:
-  - platform: sntp
-    id: sntp_time
-    # Define the timezone of the device
-    timezone: "${timezone}"
-    # Change sync interval from default 5min to 6 hours (or as set in substitutions)
-    update_interval: ${sntp_update_interval}
-    # Set specific sntp servers to use
-    servers:
-      - "${sntp_server_1}"
-      - "${sntp_server_2}"
-      - "${sntp_server_3}"
-    # Publish the time the device was last restarted
-    on_time_sync:
-      then:
-        # Update last restart time, but only once.
-        - if:
-            condition:
-              lambda: 'return id(device_last_restart).state == "";'
-            then:
-              - text_sensor.template.publish:
-                  id: device_last_restart
-                  state: !lambda 'return id(sntp_time).now().strftime("%a %d %b %Y - %I:%M:%S %p");'
+#  Creates a sensor of the uptime of the device, in formatted days, hours, minutes and seconds
+- platform: template
+  name: "Uptime"
+  entity_category: diagnostic
+  lambda: |-
+    int seconds = (id(uptime_sensor).state);
+    int days = seconds / (24 * 3600);
+    seconds = seconds % (24 * 3600);
+    int hours = seconds / 3600;
+    seconds = seconds % 3600;
+    int minutes = seconds /  60;
+    seconds = seconds % 60;
+    if ( days > 3650 ) {
+      return { "Starting up" };
+    } else if ( days ) {
+      return { (String(days) +"d " + String(hours) +"h " + String(minutes) +"m "+ String(seconds) +"s").c_str() };
+    } else if ( hours ) {
+      return { (String(hours) +"h " + String(minutes) +"m "+ String(seconds) +"s").c_str() };
+    } else if ( minutes ) {
+      return { (String(minutes) +"m "+ String(seconds) +"s").c_str() };
+    } else {
+      return { (String(seconds) +"s").c_str() };
+    }
+  icon: mdi:clock-start

@@ -2,11 +2,13 @@ substitutions:
   api_key: !secret api_encryption_key
   ota_password: !secret ota_password
   comment: ""
+  room: ""
 
 esphome:
   name: ${device_name}
   friendly_name: ${friendly_name}
   comment: ${comment}
+  area: "${room}"
 
 # Enable logging
 logger:
@@ -29,28 +31,41 @@ web_server:
   port: 80
 
 time:
-  - platform: sntp
-    id: sntp_time
+- platform: sntp
+  id: sntp_time
 
 sensor:
-  - platform: uptime
-    name: "Uptime"
-  - platform: wifi_signal
-    name: "WiFi Signal"
-    update_interval: 60s
+- platform: uptime
+  name: "Uptime"
+- platform: wifi_signal
+  name: "WiFi Signal"
+  update_interval: 60s
 
 text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "IP Address"
-  - platform: version
-    name: "ESPHome Version"
+- platform: wifi_info
+  ip_address:
+    name: "IP Address"
+    icon: mdi:ip-network
+    entity_category: diagnostic
+  ssid:
+    name: "Connected SSID"
+    icon: mdi:wifi-strength-2
+    entity_category: diagnostic
+  mac_address:
+    name: "Mac Address"
+    icon: mdi:network-pos
+    entity_category: diagnostic
+- platform: version
+  name: "ESPHome Version"
 
 binary_sensor:
-  - platform: status
-    name: "Status"
+- platform: status
+  name: "Status"
+  icon: mdi:check-network-outline
+  entity_category: diagnostic
 
 button:
-  - platform: restart
-    name: "Restart"
-    id: restart_button
+- platform: restart
+  name: "Restart"
+  id: restart_button
+  entity_category: config

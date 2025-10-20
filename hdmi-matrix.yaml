@@ -1,5 +1,4 @@
 substitutions:
-  name: "hdmi-matrix"
   device_name: "hdmi-matrix"
   friendly_name: "HDMI Matrix"
   room: Office
